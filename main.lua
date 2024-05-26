@@ -4,6 +4,8 @@ local love = require "love"
 local Player  = require "objects.Player"
 local Game  = require "states.Game"
 
+math.randomseed(os.time())
+
 function love.load()
     love.mouse.setVisible(false)
 
@@ -12,6 +14,8 @@ function love.load()
 
     player = Player(debugger)
     game  = Game()
+
+    game:startNewGame(player)
 
 end
 
@@ -50,6 +54,11 @@ function love.draw()
     
     if game.state.running or game.state.paused then
         player:draw(game.state.paused)
+
+        for _, asteroid in ipairs(asteroids) do
+            asteroid:draw(game.state.paused)
+        end
+
         game:draw(game.state.paused)    
     end
 
