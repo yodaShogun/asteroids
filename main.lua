@@ -46,7 +46,12 @@ end
 function love.update(dt)
     mouseX, mouseY = love.mouse.getPosition()
     if game.state.running then
+        
         player:movePlayer()
+
+        for ast_index, asteroid in ipairs(asteroids) do
+            asteroid:move(dt)
+        end
     end
 end
 

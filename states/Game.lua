@@ -12,7 +12,7 @@ function Game()
         state  = {
             menu  = false,
             paused = false,
-            running = false,
+            running = true,
             ended = false
         },
 
@@ -52,7 +52,6 @@ function Game()
             local asY = math.floor(math.random(love.graphics.getHeight()))
 
             table.insert(asteroids, 1, Asteroids(asX, asY, 100, self.level, true))
-
         end
         
     }
