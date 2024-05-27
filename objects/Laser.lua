@@ -7,7 +7,7 @@ function Laser(x, y, angle)
         x = x, 
         y = y, 
         xVel = LazerSpeed * math.cos(angle) / love.timer.getFPS(),
-        yVel = LazerSpeed * math.cos(angle) / love.timer.getFPS(),
+        yVel = - LazerSpeed * math.sin(angle) / love.timer.getFPS(),
         distance = 0,
 
         draw = function(self, faded)
