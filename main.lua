@@ -27,6 +27,10 @@ function love.keypressed(key)
             player.thrusting = true
         end
 
+        if key == "space" or key == "down" or key == "kp5" then
+            player:shootLazer()
+        end
+
         if key == "escape" then
             game:changeGameState("paused")
         end
@@ -43,10 +47,19 @@ function love.keyreleased(key)
     end
 end
 
+
+function love.mousepressed(x, y, button, istouch, pressed)
+    if game.state.running then
+        if button == 1 then
+            player:shootLazer()
+        end
+    end
+end
+
 function love.update(dt)
     mouseX, mouseY = love.mouse.getPosition()
     if game.state.running then
-        
+
         player:movePlayer()
 
         for ast_index, asteroid in ipairs(asteroids) do
