@@ -8,6 +8,9 @@ function Player(debugging)
     local VIEW_ANGLE =  math.rad(90)
     debugging  = debugging or false
 
+    local MaxLaserDistance  = 0.6
+    local MaxLaser = 10
+
     return{
         x = love.graphics.getWidth() / 2,
         y = love.graphics.getHeight() / 2,
@@ -40,11 +43,18 @@ function Player(debugging)
         end,
 
         shootLazer = function (self)
-            table.insert(self.lasers, 1, Laser(
-                self.x,
-                self.y,
-                self.angle
-            ))
+
+            if #self < MaxLaser then
+                table.insert(self.lasers, 1, Laser(
+                    self.x,
+                    self.y,
+                    self.angle
+                )) 
+            end
+        end,
+
+        destroyLazer = function (self, index)
+            table.remove(self.lasers, index)
         end,
 
         draw = function(self, faded)
@@ -135,6 +145,10 @@ function Player(debugging)
 
             for index, laser in pairs(self.lasers) do
                 laser:move()
+
+                if(laser.distance > MaxLaserDistance * love.graphics.getWidth()) then
+                    self.destroyLazer(self, index)
+                end
             end
 
         end
