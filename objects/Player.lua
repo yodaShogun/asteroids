@@ -6,7 +6,7 @@ function Player()
 
     local SHIP_SIZE = 30
     local VIEW_ANGLE =  math.rad(90)
-
+    local exploadDur = 3
     local MaxLaserDistance  = 0.6
     local MaxLaser = 10
 
@@ -17,6 +17,8 @@ function Player()
         radius = SHIP_SIZE / 2,
         angle  = VIEW_ANGLE,
         rotation = 0,
+        exploadingTime = 0,
+        exploading = 0,
         lasers = {},
         thrusting  = false,
         thrust = {
@@ -65,21 +67,32 @@ function Player()
                 opacity = 0.2
             end
 
-            if self.thrusting then
-                if not self.thrust.big_flame then
-                    self.thrust.flame = self.thrust.flame - 1 / love.timer.getFPS()
-                    if self.thrust.flame < 1.5 then
-                        self.thrust.big_flame = true
+            if not self.exploding then
+                if self.thrusting then
+                    if not self.thrust.big_flame then
+                        self.thrust.flame = self.thrust.flame - 1 / love.timer.getFPS()
+                        if self.thrust.flame < 1.5 then
+                            self.thrust.big_flame = true
+                        end
+                    else
+                        self.thrust.flame = self.thrust.flame + 1 /  love.timer.getFPS()
+                        if self.thrust.flame > 2.5 then
+                            self.thrust.big_flame = false
+                        end
                     end
-                else
-                    self.thrust.flame = self.thrust.flame + 1 /  love.timer.getFPS()
-                    if self.thrust.flame > 2.5 then
-                        self.thrust.big_flame = false
-                    end
+    
+                    self:drawFlameThrust("fill", {255/255, 108/255, 25/255})
+                    self:drawFlameThrust("line", {1, 0.16, 0})
                 end
+            else
+                love.graphics.setColor(1, 0, 0, opacity)
+                love.graphics.circle("fill", self.x, self.y, self.radius * 1.5)
 
-                self:drawFlameThrust("fill", {255/255, 108/255, 25/255})
-                self:drawFlameThrust("line", {1, 0.16, 0})
+                love.graphics.setColor(1, 158 / 255, 0, opacity)
+                love.graphics.circle("fill", self.x, self.y, self.radius * 1)
+
+                love.graphics.setColor(1, 234 / 255, 0, opacity)
+                love.graphics.circle("fill", self.x, self.y, self.radius * 0.5)
             end
 
             if showDebugging  then
@@ -108,40 +121,46 @@ function Player()
         end,
 
         movePlayer = function (self)
-            local FPS  = love.timer.getFPS()
-            local friction =  0.7
 
-            self.rotation = 360/180 * math.pi/FPS
+            self.exploding = self.exploadingTime > 0
 
-            if love.keyboard.isDown("left") then
-                self.angle = self.angle - self.rotation
-            end
+            if not self.exploding then
+                local FPS  = love.timer.getFPS()
+                local friction =  0.7
 
-            if self.thrusting then
+                self.rotation = 360/180 * math.pi/FPS
 
-                self.thrust.x = self.thrust.x + self.thrust.speed * math.cos(self.angle) / FPS
-                self.thrust.y = self.thrust.y - self.thrust.speed * math.sin(self.angle) / FPS
-            else
-                if self.thrust.x ~=0 or self.thrust.y ~= 0 then
-                    self.thrust.x = self.thrust.x - friction * self.thrust.x / FPS
-                    self.thrust.y = self.thrust.y - friction * self.thrust.y / FPS
+                if love.keyboard.isDown("left") then
+                    self.angle = self.angle - self.rotation
                 end
-            end
 
-            self.x = self.x + self.thrust.x
-            self.y = self.y + self.thrust.y
+                if self.thrusting then
 
-            if self.x + self.radius < 0 then  
-                self.x  = love.graphics.getWidth() + self.radius
-            elseif self.x - self.radius > love.graphics.getWidth() then
-                self.x  = -self.radius
-            end
+                    self.thrust.x = self.thrust.x + self.thrust.speed * math.cos(self.angle) / FPS
+                    self.thrust.y = self.thrust.y - self.thrust.speed * math.sin(self.angle) / FPS
+                else
+                    if self.thrust.x ~=0 or self.thrust.y ~= 0 then
+                        self.thrust.x = self.thrust.x - friction * self.thrust.x / FPS
+                        self.thrust.y = self.thrust.y - friction * self.thrust.y / FPS
+                    end
+                end
 
-            if self.y + self.radius < 0 then  
-                self.y  = love.graphics.getHeight() + self.radius
-            elseif self.y - self.radius > love.graphics.getHeight() then
-                self.y  = -self.radius
-            end
+                self.x = self.x + self.thrust.x
+                self.y = self.y + self.thrust.y
+
+                if self.x + self.radius < 0 then  
+                    self.x  = love.graphics.getWidth() + self.radius
+                elseif self.x - self.radius > love.graphics.getWidth() then
+                    self.x  = -self.radius
+                end
+
+                if self.y + self.radius < 0 then  
+                    self.y  = love.graphics.getHeight() + self.radius
+                elseif self.y - self.radius > love.graphics.getHeight() then
+                    self.y  = -self.radius
+                end
+                
+            end      
             for index, laser in pairs(self.lasers) do
                 if(laser.distance > MaxLaserDistance * love.graphics.getWidth() and (laser.exploding == 0)) then
                     laser:expload()
@@ -152,7 +171,11 @@ function Player()
                 elseif laser.exploding == 2 then
                     self.destroyLazer(self, index)
                 end
-            end
+            end      
+        end, 
+
+        expload = function (self)
+            self.exploadingTime = math.ceil(exploadDur * love.timer.getFPS())
         end
     }
 

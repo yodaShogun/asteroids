@@ -4,6 +4,7 @@
         "mouseY",
         "asteroids",
         "showDebugging",
-        "calculateDIstance"
+        "calculateDIstance",
+        "destAst"
     ]
 }

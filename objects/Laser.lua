@@ -16,20 +16,20 @@ function Laser(x, y, angle)
         
 
         draw = function(self, faded)
-            local opcaity  = 1 
+            local opacity  = 1 
 
             if faded then
-                opcaity = 0.2
+                opacity = 0.2
             end
             if self.exploding < 1 then   
-                love.graphics.setColor(1, 1, 1, opcaity)
+                love.graphics.setColor(1, 1, 1, opacity)
                 love.graphics.setPointSize(3)
                 love.graphics.points(self.x, self.y)
             else
-                love.graphics.setColor(1, 104 / 255, 0, opcaity)
-                love.graphics.circle("fill", self.x, self.y, 7 * 2)
+                love.graphics.setColor(1, 104 / 255, 0, opacity)
+                love.graphics.circle("fill", self.x, self.y, 7 * 1.5)
 
-                love.graphics.setColor(1, 234 / 255, 0, opcaity)
+                love.graphics.setColor(1, 234 / 255, 0, opacity)
                 love.graphics.circle("fill", self.x, self.y, 7 * 1)
             end
         end, 
