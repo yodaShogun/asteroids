@@ -51,7 +51,7 @@ function Game()
             local asX = math.floor(math.random(love.graphics.getWidth()))
             local asY = math.floor(math.random(love.graphics.getHeight()))
 
-            table.insert(asteroids, 1, Asteroids(asX, asY, 100, self.level, true))
+            table.insert(asteroids, 1, Asteroids(asX, asY, 100, self.level))
         end
         
     }

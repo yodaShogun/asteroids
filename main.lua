@@ -4,21 +4,20 @@ local love = require "love"
 local Player  = require "objects.Player"
 local Game  = require "states.Game"
 
+require "globals"
+
 math.randomseed(os.time())
 
 function love.load()
     love.mouse.setVisible(false)
 
     mouseX, mouseY = 0, 0
-    local debugger = true
-
-    player = Player(debugger)
+    player = Player()
     game  = Game()
 
     game:startNewGame(player)
 
 end
-
 
 function love.keypressed(key)
 
@@ -47,7 +46,6 @@ function love.keyreleased(key)
     end
 end
 
-
 function love.mousepressed(x, y, button, istouch, pressed)
     if game.state.running then
         if button == 1 then
@@ -63,7 +61,16 @@ function love.update(dt)
         player:movePlayer()
 
         for ast_index, asteroid in ipairs(asteroids) do
+
+            for _, laser in pairs(player.lasers)do
+                if calculateDIstance(laser.x, laser.y, asteroid.x, asteroid.y) < asteroid.radius then
+                    laser:expload()
+                    asteroid:destroy(asteroids, ast_index, game)
+                end
+            end
+
             asteroid:move(dt)
+
         end
     end
 end

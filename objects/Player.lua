@@ -2,16 +2,16 @@ local love = require "love"
 
 local Laser = require "objects.Laser"
 
-function Player(debugging)
+function Player()
 
     local SHIP_SIZE = 30
     local VIEW_ANGLE =  math.rad(90)
-    debugging  = debugging or false
 
     local MaxLaserDistance  = 0.6
     local MaxLaser = 10
 
     return{
+
         x = love.graphics.getWidth() / 2,
         y = love.graphics.getHeight() / 2,
         radius = SHIP_SIZE / 2,
@@ -82,7 +82,7 @@ function Player(debugging)
                 self:drawFlameThrust("line", {1, 0.16, 0})
             end
 
-            if debugging  then
+            if showDebugging  then
                 love.graphics.setColor(1, 0, 0)
 
                 love.graphics.rectangle("fill", self.x-1, self.y-1, 2, 2)
@@ -142,15 +142,17 @@ function Player(debugging)
             elseif self.y - self.radius > love.graphics.getHeight() then
                 self.y  = -self.radius
             end
-
             for index, laser in pairs(self.lasers) do
-                laser:move()
+                if(laser.distance > MaxLaserDistance * love.graphics.getWidth() and (laser.exploding == 0)) then
+                    laser:expload()
+                end 
 
-                if(laser.distance > MaxLaserDistance * love.graphics.getWidth()) then
+                if laser.exploding == 0 then
+                    laser:move()
+                elseif laser.exploding == 2 then
                     self.destroyLazer(self, index)
                 end
             end
-
         end
     }
 

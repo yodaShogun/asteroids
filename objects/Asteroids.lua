@@ -1,8 +1,7 @@
 local love = require "love"
+require "globals"
 
-function Asteroids(x, y, ast_size, level, debugging)
-
-    debugging = debugging or false
+function Asteroids(x, y, ast_size, level)
 
     local AsteroidVert = 10
     local AsteroidsJag = 0.4
@@ -51,7 +50,7 @@ function Asteroids(x, y, ast_size, level, debugging)
 
             love.graphics.polygon("line", points)
 
-            if debugging then
+            if showDebugging then
                 love.graphics.setColor(1 , 0, 0)
                 love.graphics.circle("line", self.x, self.y, self.radius)
             end
@@ -72,9 +71,18 @@ function Asteroids(x, y, ast_size, level, debugging)
             elseif self.y - self.radius > love.graphics.getHeight() then
                 self.y  = -self.radius
             end
+        end,
+
+        destroy = function(self, asteroidsTbl, index, game)
+
+            local minAsteroidSize = math.ceil(ASTEROID_SIZE / 8)
+
+            if self.radius > minAsteroidSize then
+                table.insert(asteroidsTbl, Asteroids(self.x, self.y, self.radius, game.level))
+            end
+
+            table.remove(asteroidsTbl, index)
         end
-
-
     }
 end
 
