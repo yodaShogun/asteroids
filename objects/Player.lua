@@ -18,7 +18,7 @@ function Player()
         angle  = VIEW_ANGLE,
         rotation = 0,
         exploadingTime = 0,
-        exploading = 0,
+        exploading = false,
         lasers = {},
         thrusting  = false,
         thrust = {
