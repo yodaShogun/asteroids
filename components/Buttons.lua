@@ -4,7 +4,7 @@ local Text  = require "components.Text"
 function Button (func, txtColor, btnColor, width, height, text, align, font, btnX, btnY, xTxt, yTxt)
 
     local btnText = {
-        y = btnY
+        
     }
 
     func = func or function () print("Action Not Allowed") end
@@ -23,7 +23,7 @@ function Button (func, txtColor, btnColor, width, height, text, align, font, btn
 
     return{
         txtColor  = txtColor or {r =1, g=1, b=1},
-        btnColor = btnColor or {r =1, g=1, b=1},
+        btnColor = btnColor or {r =0, g=0, b=0},
         width = width or 100,
         height = height or 100,
         text = text or "VOID",
@@ -44,9 +44,9 @@ function Button (func, txtColor, btnColor, width, height, text, align, font, btn
         },
 
         draw = function (self)
-            love.graphics.setColor(self.btnColor['r'], self.btnColor['g'], self.btnColor['b'])
-            love.graphics.rectangle('fill',self.btnX, self.btnY, self.width, self.height)
-            love.graphics.setColor(self.btnColor['r'], self.btnColor['g'], self.btnColor['b'])
+            love.graphics.setColor(self.btnColor["r"], self.btnColor["g"], self.btnColor["b"])
+            love.graphics.rectangle("fill",self.btnX, self.btnY, self.width, self.height)
+            love.graphics.setColor(self.btnColor["r"], self.btnColor["g"], self.btnColor["b"])
 
             self.text_component:draw()
 

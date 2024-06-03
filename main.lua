@@ -3,6 +3,7 @@
 local love = require "love"
 local Player  = require "objects.Player"
 local Game  = require "states.Game"
+local Menu = require "states.Menu"
 
 require "globals"
 
@@ -14,9 +15,7 @@ function love.load()
     mouseX, mouseY = 0, 0
     player = Player()
     game  = Game()
-
-    game:startNewGame(player)
-
+    menu = Menu(game, player)
 end
 
 function love.keypressed(key)
@@ -50,6 +49,8 @@ function love.mousepressed(x, y, button, istouch, pressed)
     if game.state.running then
         if button == 1 then
             player:shootLazer()
+        else
+            clickedMouse = true
         end
     end
 end
@@ -98,7 +99,10 @@ function love.update(dt)
 
             asteroid:move(dt)
         end
+    elseif game.state.menu then
+        clickedMouse = false
     end
+
 end
 
 function love.draw()
@@ -112,7 +116,9 @@ function love.draw()
             asteroid:draw(game.state.paused)
         end
 
-        game:draw(game.state.paused)    
+        game:draw(game.state.paused)
+    elseif game.state.menu then    
+        menu:draw()
     end
 
     --player:draw()
