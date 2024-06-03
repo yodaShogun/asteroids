@@ -2,7 +2,7 @@ local love = require "love"
 
 local Laser = require "objects.Laser"
 
-function Player()
+function Player(num_lives)
 
     local SHIP_SIZE = 30
     local VIEW_ANGLE =  math.rad(90)
@@ -28,6 +28,7 @@ function Player()
             big_flame = false,
             flame = 2.0
         },
+        lives = num_lives or 3,
 
         drawFlameThrust = function(self, fillType, color)
 
@@ -118,6 +119,43 @@ function Player()
                 laser:draw(faded)
             end
 
+        end,
+
+        drawLives = function (self, faded)
+            local opacity = 1
+            if faded then
+                opacity = 0.2
+            end
+
+            if self.lives == 2 then
+                love.graphics.setColor(1, 1, 0.5, opacity)
+            elseif self.lives == 1 then
+                love.graphics.setColor(1, 0.2, 0.2, opacity)
+            else
+                love.graphics.setColor(255, 255, 255, opacity)
+            end
+
+            local xPos, yPos = 45, 30
+
+            for i=1, self.lives do
+
+                if self.exploadingTime then
+                    if i == self.lives then
+                        love.graphics.setColor(1, 0, 0, opacity)
+                    end
+                end
+
+                love.graphics.polygon(
+                    "line",
+                    (i * xPos) + ( ( 4 / 3) *self.radius) * math.cos(VIEW_ANGLE),
+                    yPos - ( ( 4 / 3) *self.radius) * math.sin(VIEW_ANGLE),
+                    (i * xPos) - self.radius * ( 2/3 * math.cos(VIEW_ANGLE) + math.sin(VIEW_ANGLE)),
+                    yPos + self.radius * ( 2/3 * math.sin(VIEW_ANGLE) - math.cos(VIEW_ANGLE)),
+                    (i * xPos) - self.radius * ( 2/3 * math.cos(VIEW_ANGLE) - math.sin(VIEW_ANGLE)),
+                    yPos + self.radius * ( 2/3 * math.sin(VIEW_ANGLE) + math.cos(VIEW_ANGLE))
+                ) 
+
+            end
         end,
 
         movePlayer = function (self)

@@ -68,6 +68,14 @@ function love.update(dt)
                 end
             else
                 player.exploadingTime = player.exploadingTime - 1
+
+                if player.exploadingTime == 0 then
+                    if player.lives - 1 <= 0 then
+                        game:changeGameState("ended")
+                        return
+                    end
+                    player = Player(player.lives - 1)
+                end
             end
 
             for _, laser in pairs(player.lasers)do
@@ -76,16 +84,19 @@ function love.update(dt)
                     asteroid:destroy(asteroids, ast_index, game)
                 end
             end
-
             if destAst then
+                if player.lives - 1 <= 0 then
+                    if player.exploadingTime == 0 then
+                        destAst = false
+                        asteroid:destroy(asteroids, ast_index, game)
+                    end
+                end
+            else
                 destAst = false
                 asteroid:destroy(asteroids, ast_index, game)
             end
 
             asteroid:move(dt)
-
-
-
         end
     end
 end
@@ -93,6 +104,8 @@ end
 function love.draw()
     
     if game.state.running or game.state.paused then
+
+        player:drawLives(game.state.paused)
         player:draw(game.state.paused)
 
         for _, asteroid in ipairs(asteroids) do
