@@ -13,11 +13,13 @@ function Menu(game, player)
     }
 
     return{
+
         draw = function (self)
             for _, button in pairs(buttons) do
                 button:draw()
             end
         end,
+        
     }
 end
 
